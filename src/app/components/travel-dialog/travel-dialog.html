@@ -1,1 +1,61 @@
-<p>travel-dialog works!</p>
+<div>
+  <form
+    [formGroup]="travelForm"
+    (ngSubmit)="submit()"
+  >
+
+    <!-- COUNTRY -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        Country
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="country"
+      >
+
+    </div>
+
+    <!-- CITY -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        City
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="city"
+      >
+
+    </div>
+
+    <!-- COST -->
+    <div class="mb-3">
+
+      <label class="form-label">
+        Cost
+      </label>
+
+      <input
+        type="number"
+        class="form-control"
+        formControlName="cost"
+      >
+
+    </div>
+
+    <button
+      class="btn btn-primary"
+      type="submit"
+    >
+      Save Trip
+    </button>
+
+  </form>
+
+</div>

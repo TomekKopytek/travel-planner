@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -16,25 +16,16 @@ import { CalendarOptions } from '@fullcalendar/core';
   templateUrl: './calendar.html',
   styleUrls: ['./calendar.css']
 })
-export class Calendar implements OnInit {
+export class Calendar implements OnInit, OnChanges {
+  @Input() events: any[]=[];
+  @Output() dateSelected = new EventEmitter<any>();
 
   calendarOptions!: CalendarOptions;
 
   ngOnInit(): void {
 
     this.calendarOptions = {
-      events: [
-        {
-          title: 'Trip to Paris',
-          start: '2026-05-18T10:00:00',
-          end: '2026-05-18T12:00:00'
-        },
-        {
-          title: 'Trip to Rome',
-          start: '2026-05-20T14:00:00',
-          end: '2026-05-20T16:00:00'
-        }
-      ],
+      events: this.events,
 
       plugins: [
         dayGridPlugin,
@@ -58,7 +49,12 @@ export class Calendar implements OnInit {
     };
 
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['events'] && this.calendarOptions) {
+      this.calendarOptions.events = this.events;
+    }
+  }
   handleDateClick(info: any): void{
-      alert('Clicked date:'+ info.dateStr);
+      this.dateSelected.emit(info.date);
   }
 }
