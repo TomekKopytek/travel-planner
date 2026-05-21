@@ -15,17 +15,13 @@ export class App {
   showModal = false;
   handleTripAdded(trip: any): void {
 
-  const endDate = new Date(this.selectedDate);
-
-  endDate.setHours(endDate.getHours() + 1);
-
   const newEvent = {
 
     title: `${trip.city} - ${trip.cost} PLN`,
 
-    start: this.selectedDate,
+    start: trip.startDate,
 
-    end: endDate
+    end: trip.endDate
 
   };
 

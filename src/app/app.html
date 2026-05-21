@@ -82,6 +82,7 @@
         <div class="modal-body">
 
           <app-travel-dialog
+            [selectedDate]="selectedDate"
             (tripAdded)="handleTripAdded($event)">
           </app-travel-dialog>
 
