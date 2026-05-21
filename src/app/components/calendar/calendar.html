@@ -1,7 +1,7 @@
-<div class="border rounded p-5 bg-light text-center">
+@if (calendarOptions) {
 
-  <h3>
-    Calendar component works
-  </h3>
+  <full-calendar
+    [options]="calendarOptions">
+  </full-calendar>
 
-</div>
+}
