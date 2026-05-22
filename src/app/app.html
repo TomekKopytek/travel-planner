@@ -50,6 +50,13 @@
       Calendar
     </h2>
 
+    <button
+      class="btn btn-primary mb-3"
+      (click)="testWeather()"
+    >
+      Test Weather API
+    </button>
+
     <app-calendar
       [events]="events"
       (dateSelected)="handleDateSelected($event)">

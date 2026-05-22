@@ -1,42 +1,101 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
 import { Calendar } from './components/calendar/calendar';
 import { TravelDialog } from './components/travel-dialog/travel-dialog';
 
+import { Weather } from './services/weather';
+
 @Component({
   selector: 'app-root',
-  imports: [Calendar, TravelDialog],
+  imports: [
+    Calendar,
+    TravelDialog
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+
   protected readonly title = signal('travel-planner');
+
   events: any[] = [];
+
   showModal = false;
+
+  selectedDate!: Date;
+
+  constructor(
+    private weather: Weather
+  ) {}
+
+  testWeather(): void {
+
+    this.weather.getWeather('Tokyo')
+      .subscribe({
+
+        next: (response) => {
+
+          console.log(response);
+
+        },
+
+        error: (error) => {
+
+          console.error(error);
+
+        }
+
+      });
+
+  }
+
   handleTripAdded(trip: any): void {
 
-  const newEvent = {
+    this.weather.getWeather(trip.city)
+      .subscribe({
 
-    title: `${trip.city} - ${trip.cost} PLN`,
+        next: (response: any) => {
 
-    start: trip.startDate,
+          const temperature = response.current.temp_c;
 
-    end: trip.endDate
+          const condition = response.current.condition.text;
 
-  };
+          const newEvent = {
 
-  this.events = [...this.events, newEvent];
-  this.showModal = false;
-}
-  selectedDate!:Date;
+            title:
+              `✈ ${trip.city} | ${temperature}°C`,
+
+            start: trip.startDate,
+
+            end: trip.endDate
+
+          };
+
+          this.events = [...this.events, newEvent];
+
+          this.showModal = false;
+
+        },
+
+        error: (error) => {
+
+          console.error(error);
+
+        }
+
+      });
+
+  }
+
   handleDateSelected(date: Date): void {
-    
+
     this.selectedDate = date;
 
     this.showModal = true;
 
     console.log(this.selectedDate);
-  }
-  
-}
 
+  }
+
+}
