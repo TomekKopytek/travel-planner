@@ -29,6 +29,10 @@ export class App {
     private weather: Weather
   ) {}
 
+  ngOnInit(): void {
+    this.loadEvents();
+  }
+
   testWeather(): void {
 
     this.weather.getWeather('Tokyo')
@@ -74,6 +78,8 @@ export class App {
 
           this.events = [...this.events, newEvent];
 
+          this.saveEvents();
+
           this.showModal = false;
 
         },
@@ -86,6 +92,20 @@ export class App {
 
       });
 
+  }
+  saveEvents(): void {
+    localStorage.setItem(
+      'travelEvents',
+
+      JSON.stringify(this.events)
+    );
+  }
+  loadEvents(): void {
+    const savedEvents = localStorage.getItem('travelEvents');
+
+    if(savedEvents) {
+      this.events = JSON.parse(savedEvents);
+    }
   }
 
   handleDateSelected(date: Date): void {
