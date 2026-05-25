@@ -59,7 +59,8 @@
 
     <app-calendar
       [events]="events"
-      (dateSelected)="handleDateSelected($event)">
+      (dateSelected)="handleDateSelected($event)"
+      (eventDeleted)="handleEventDeleted($event)">
     </app-calendar>
     @if (showModal) {
 

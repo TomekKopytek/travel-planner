@@ -27,19 +27,26 @@ export class TravelDialog implements OnChanges {
 
     this.travelForm = this.fb.group({
 
-      country: ['', Validators.required],
+      country: ['', [Validators.required, Validators.minLength(2)]],
 
-      city: ['', Validators.required],
+      city: ['', [Validators.required, Validators.minLength(2)]],
 
-      cost: ['', Validators.required],
+      cost: ['', [Validators.required, Validators.min(1)]],
 
       startDate: ['', Validators.required],
 
       endDate: ['', Validators.required]
 
     });
+    this.setMinDate();
 
   }
+  validateDates(): boolean {
+    const startDate = new Date(this.travelForm.value.startDate);
+    const endDate = new Date(this.travelForm.value.endDate);
+    return endDate>startDate;
+  }
+
   formatDate(date: Date): string {
 
   const year = date.getFullYear();
@@ -55,13 +62,25 @@ export class TravelDialog implements OnChanges {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 
   }
+  minDate='';
+  submitted = false;
+  setMinDate(): void {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month=String(now.getMonth()+1).padStart(2,'0');
+    const day = String(now.getDate()).padStart(2,'0');
+    const hours =String(now.getHours()).padStart(2,'0');
+    const minutes =String(now.getMinutes()).padStart(2,'0');
+    this.minDate=`${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   submit(): void {
-
-    if(this.travelForm.invalid) {
+    this.submitted = true;
+    if(this.travelForm.invalid||!this.validateDates()) {
       return;
     }
     this.tripAdded.emit(this.travelForm.value);
+    this.submitted = false;
     this.travelForm.reset();
 
   }

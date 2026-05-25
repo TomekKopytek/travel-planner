@@ -110,12 +110,25 @@ export class App {
 
   handleDateSelected(date: Date): void {
 
+    const now = new Date();
+
+    if (date < now) {
+
+      alert('You cannot create trips in the past.');
+
+      return;
+
+    }
+
     this.selectedDate = date;
 
     this.showModal = true;
 
-    console.log(this.selectedDate);
-
   }
-
+  handleEventDeleted(event: any): void{
+    this.events = this.events.filter(
+      e=>e.title!==event.title
+    );
+    this.saveEvents();
+  }
 }

@@ -15,8 +15,25 @@
         type="text"
         class="form-control"
         formControlName="country"
-      >
 
+        [class.is-invalid]="
+          submitted &&
+          travelForm.get('country')?.invalid
+        "
+      >
+      @if (
+        submitted &&
+        travelForm.get('country')?.invalid
+      ) {
+
+        <div class="text-danger mt-1">
+
+          Country must contain
+          at least 2 characters.
+
+        </div>
+
+      }
     </div>
 
     <!-- CITY -->
@@ -30,8 +47,25 @@
         type="text"
         class="form-control"
         formControlName="city"
-      >
 
+        [class.is-invalid]="
+          submitted &&
+          travelForm.get('city')?.invalid
+        "
+      >
+      @if (
+        submitted &&
+        travelForm.get('city')?.invalid
+      ) {
+
+        <div class="text-danger mt-1">
+
+          City must contain
+          at least 2 characters.
+
+        </div>
+
+      }
     </div>
 
     <!-- COST -->
@@ -45,8 +79,24 @@
         type="number"
         class="form-control"
         formControlName="cost"
-      >
 
+        [class.is-invalid]="
+          submitted &&
+          travelForm.get('cost')?.invalid
+        "
+      >
+      @if (
+        submitted &&
+        travelForm.get('cost')?.invalid
+      ) {
+
+        <div class="text-danger mt-1">
+
+          Cost must be greater than 0.
+
+        </div>
+
+      }
     </div>
     <!-- START DATE -->
 
@@ -60,6 +110,7 @@
         type="datetime-local"
         class="form-control"
         formControlName="startDate"
+        [min]="minDate"
       >
 
     </div>
@@ -76,8 +127,20 @@
         type="datetime-local"
         class="form-control"
         formControlName="endDate"
+        [min]="minDate"
       >
+      @if (
+        submitted &&
+        !validateDates()
+      ) {
 
+        <div class="text-danger mt-1">
+
+          End date must be after start date.
+
+        </div>
+
+      }
     </div>
 
     <button

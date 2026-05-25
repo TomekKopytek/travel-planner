@@ -19,6 +19,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 export class Calendar implements OnInit, OnChanges {
   @Input() events: any[]=[];
   @Output() dateSelected = new EventEmitter<any>();
+  @Output() eventDeleted = new EventEmitter<any>();
 
   calendarOptions!: CalendarOptions;
 
@@ -46,6 +47,7 @@ export class Calendar implements OnInit, OnChanges {
 
       weekends: true,
       dateClick: this.handleDateClick.bind(this),
+      eventClick: this.handleEventClick.bind(this),
     };
 
   }
@@ -56,5 +58,11 @@ export class Calendar implements OnInit, OnChanges {
   }
   handleDateClick(info: any): void{
       this.dateSelected.emit(info.date);
+  }
+  handleEventClick(info:any): void {
+    const confirmDelete = confirm('Delete this trip?');
+    if (confirmDelete) {
+      this.eventDeleted.emit(info.event);
+    }
   }
 }
