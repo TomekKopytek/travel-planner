@@ -20,7 +20,10 @@ import {
 })
 export class TravelDialog implements OnChanges {
   @Output() tripAdded = new EventEmitter<any>();
+  @Output() tripDeleted = new EventEmitter<void>(); 
+  @Output() dialogClosed = new EventEmitter<void>();
   @Input() selectedDate!: Date;
+  @Input() editingEvent: any = null;
   travelForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
@@ -74,27 +77,83 @@ export class TravelDialog implements OnChanges {
     this.minDate=`${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  submit(): void {
-    this.submitted = true;
-    if(this.travelForm.invalid||!this.validateDates()) {
-      return;
-    }
-    this.tripAdded.emit(this.travelForm.value);
-    this.submitted = false;
-    this.travelForm.reset();
+  submit(event?: Event): void {
 
+  event?.preventDefault();
+
+  this.submitted = true;
+
+  if (
+    this.travelForm.invalid ||
+    !this.validateDates()
+  ) {
+
+    return;
+
+  }
+
+  this.tripAdded.emit(
+    this.travelForm.value
+  );
+
+}
+  deleteTrip(): void{
+    console.log('Delete clicked')
+    this.tripDeleted.emit();
+  }
+  closeDialog(): void {
+    this.dialogClosed.emit();
   }
   ngOnChanges(changes: SimpleChanges): void {
 
-  if (changes['selectedDate'] && this.selectedDate) {
+      if (
+      changes['selectedDate'] &&
+      this.selectedDate
+    ) {
 
-    const formattedDate = this.formatDate(this.selectedDate);
+      const formattedDate =
+        this.formatDate(this.selectedDate);
+
+      this.travelForm.patchValue({
+        startDate: formattedDate
+      });
+
+    }
+
+    if (
+      changes['editingEvent'] &&
+      this.editingEvent
+    ) {
+
+      this.fillFormForEdit();
+
+    }
+  
+  }
+  fillFormForEdit(): void {
+
+    if (!this.editingEvent) {
+      return;
+    }
 
     this.travelForm.patchValue({
-      startDate: formattedDate
+
+      country:
+        this.editingEvent.extendedProps.country,
+
+      city:
+        this.editingEvent.extendedProps.city,
+
+      cost:
+        this.editingEvent.extendedProps.cost,
+
+      startDate:
+        this.formatDate(this.editingEvent.start),
+
+      endDate:
+        this.formatDate(this.editingEvent.end)
+
     });
 
-  }
-  
   }
 }

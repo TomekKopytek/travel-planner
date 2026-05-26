@@ -1,7 +1,7 @@
 <div>
   <form
     [formGroup]="travelForm"
-    (ngSubmit)="submit()"
+    (ngSubmit)="submit($event)"
   >
 
     <!-- COUNTRY -->
@@ -143,12 +143,36 @@
       }
     </div>
 
+    <div class="d-flex gap-2 mt-3">
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="closeDialog()"
+    >
+      Cancel
+    </button>
+
+    @if (editingEvent) {
+
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deleteTrip()"
+      >
+        Delete
+      </button>
+
+    }
+
     <button
       class="btn btn-primary"
       type="submit"
     >
       Save Trip
     </button>
+
+  </div>
 
   </form>
 

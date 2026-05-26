@@ -60,9 +60,6 @@ export class Calendar implements OnInit, OnChanges {
       this.dateSelected.emit(info.date);
   }
   handleEventClick(info:any): void {
-    const confirmDelete = confirm('Delete this trip?');
-    if (confirmDelete) {
       this.eventDeleted.emit(info.event);
-    }
   }
 }

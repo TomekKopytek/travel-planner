@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet,RouterLink, Router } from '@angular/router';
 
 import { Calendar } from './components/calendar/calendar';
 import { TravelDialog } from './components/travel-dialog/travel-dialog';
@@ -10,14 +10,17 @@ import { Weather } from './services/weather';
   selector: 'app-root',
   imports: [
     Calendar,
-    TravelDialog
+    TravelDialog,
+    RouterLink,
+    RouterOutlet
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
 
-  protected readonly title = signal('travel-planner');
+  protected readonly title =
+    signal('travel-planner');
 
   events: any[] = [];
 
@@ -25,12 +28,19 @@ export class App {
 
   selectedDate!: Date;
 
+  editingEvent: any = null;
+
+  editingEventId: string | null = null;
+
   constructor(
-    private weather: Weather
+    private weather: Weather,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
+
     this.loadEvents();
+
   }
 
   testWeather(): void {
@@ -61,27 +71,77 @@ export class App {
 
         next: (response: any) => {
 
-          const temperature = response.current.temp_c;
+          const temperature =
+            response.current.temp_c;
 
-          const condition = response.current.condition.text;
+          const updatedEvent = {
 
-          const newEvent = {
+            id:
+              this.editingEventId ||
+              crypto.randomUUID(),
 
             title:
-              `✈ ${trip.city} | ${temperature}°C`,
+              `✈ ${trip.city}
+               | 🌤 ${temperature}°C
+               | 💰 ${trip.cost} PLN`,
 
             start: trip.startDate,
 
-            end: trip.endDate
+            end: trip.endDate,
+
+            extendedProps: {
+
+              country: trip.country,
+
+              city: trip.city,
+
+              cost: trip.cost,
+
+              temperature: temperature
+
+            }
 
           };
 
-          this.events = [...this.events, newEvent];
+          // EDIT MODE
+
+          if (this.editingEvent) {
+
+            const filteredEvents =
+              this.events.filter(
+                event =>
+                  event.id !==
+                  this.editingEventId
+              );
+
+            this.events = [
+
+              ...filteredEvents,
+
+              updatedEvent
+
+            ];
+
+          }
+
+          // CREATE MODE
+
+          else {
+
+            this.events = [
+
+              ...this.events,
+
+              updatedEvent
+
+            ];
+
+          }
 
           this.saveEvents();
-
-          this.showModal = false;
-
+          setTimeout(()=>{
+            this.handleDialogClosed();
+          })
         },
 
         error: (error) => {
@@ -93,42 +153,107 @@ export class App {
       });
 
   }
+
   saveEvents(): void {
+
     localStorage.setItem(
+
       'travelEvents',
 
       JSON.stringify(this.events)
+
     );
+
   }
+
   loadEvents(): void {
-    const savedEvents = localStorage.getItem('travelEvents');
 
-    if(savedEvents) {
-      this.events = JSON.parse(savedEvents);
+    const savedEvents =
+      localStorage.getItem(
+        'travelEvents'
+      );
+
+    if (savedEvents) {
+
+      this.events =
+        JSON.parse(savedEvents);
+
     }
+
   }
 
-  handleDateSelected(date: Date): void {
+  handleDateSelected(
+    date: Date
+  ): void {
 
     const now = new Date();
 
     if (date < now) {
 
-      alert('You cannot create trips in the past.');
+      alert(
+        'You cannot create trips in the past.'
+      );
 
       return;
 
     }
+
+    this.editingEvent = null;
+
+    this.editingEventId = null;
 
     this.selectedDate = date;
 
     this.showModal = true;
 
   }
-  handleEventDeleted(event: any): void{
+
+  handleEventDeleted(
+    event: any
+  ): void {
+
+    this.editingEvent = event;
+
+    this.editingEventId = event.id;
+
+    this.showModal = true;
+
+  }
+
+  handleTripDeleted(): void {
+
+    if (!this.editingEventId) {
+      return;
+    }
+
     this.events = this.events.filter(
-      e=>e.title!==event.title
+
+      event =>
+        event.id !==
+        this.editingEventId
+
     );
+
     this.saveEvents();
+
+    this.handleDialogClosed();
+
+  }
+
+  handleDialogClosed(): void {
+
+    this.showModal = false;
+
+    this.editingEvent = null;
+
+    this.editingEventId = null;
+
+    this.selectedDate = new Date();
+
+  }
+  isTripsPage(): boolean {
+
+    return this.router.url === '/trips';
+
   }
 }

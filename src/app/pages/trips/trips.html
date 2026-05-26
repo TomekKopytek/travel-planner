@@ -1,0 +1,80 @@
+<div class="container">
+
+  <h2 class="mb-4">
+
+    My Trips
+
+  </h2>
+
+  @if (trips.length === 0) {
+
+    <div class="alert alert-info">
+
+      No trips yet.
+
+    </div>
+
+  }
+
+  <div class="row g-3">
+
+    @for (
+      trip of trips;
+      track trip.id
+    ) {
+
+      <div class="col-md-6 col-lg-4">
+
+        <div class="card shadow-sm h-100">
+
+          <div class="card-body">
+
+            <h5 class="card-title">
+
+              {{ trip.extendedProps.city }}
+
+            </h5>
+
+            <p class="card-text mb-2">
+
+              🌍
+              {{ trip.extendedProps.country }}
+
+            </p>
+
+            <p class="card-text mb-2">
+
+              🌤
+              {{ trip.extendedProps.temperature }}°C
+
+            </p>
+
+            <p class="card-text mb-2">
+
+              💰
+              {{ trip.extendedProps.cost }} PLN
+
+            </p>
+
+            <p class="card-text">
+
+              📅
+              {{ trip.start | date:'mediumDate' }}
+
+              →
+
+              {{ trip.end | date:'mediumDate' }}
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

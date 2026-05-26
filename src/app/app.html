@@ -13,30 +13,33 @@
     <ul class="nav flex-column">
 
       <li class="nav-item mb-2">
-        <a class="nav-link text-white">
+
+        <a
+          class="nav-link text-white"
+          routerLink="/"
+        >
 
           <i class="bi bi-calendar3 me-2"></i>
 
           Calendar
+
         </a>
+
       </li>
 
       <li class="nav-item mb-2">
-        <a class="nav-link text-white">
+
+        <a
+          class="nav-link text-white"
+          routerLink="/trips"
+        >
 
           <i class="bi bi-airplane me-2"></i>
 
           Trips
+
         </a>
-      </li>
 
-      <li class="nav-item">
-        <a class="nav-link text-white">
-
-          <i class="bi bi-gear me-2"></i>
-
-          Settings
-        </a>
       </li>
 
     </ul>
@@ -46,65 +49,88 @@
   <!-- MAIN -->
   <div class="flex-grow-1 p-4 overflow-auto">
 
-    <h2 class="mb-4">
+    
+
+    @if(!isTripsPage()) {
+      <h2 class="mb-4">
       Calendar
-    </h2>
+      </h2>
+      <app-calendar
 
-    <button
-      class="btn btn-primary mb-3"
-      (click)="testWeather()"
-    >
-      Test Weather API
-    </button>
-
-    <app-calendar
       [events]="events"
+
       (dateSelected)="handleDateSelected($event)"
-      (eventDeleted)="handleEventDeleted($event)">
-    </app-calendar>
+
+      (eventDeleted)="handleEventDeleted($event)"
+
+      >
+      </app-calendar>
+    }
     @if (showModal) {
 
-  <div
-    class="modal d-block"
-    tabindex="-1"
-  >
+      <div
+        class="modal d-block"
+        tabindex="-1"
+      >
 
-    <div class="modal-dialog">
+        <div class="modal-dialog">
 
-      <div class="modal-content">
+          <div class="modal-content">
 
-        <div class="modal-header">
+            <div class="modal-header">
 
-          <h5 class="modal-title">
-            Add Trip
-          </h5>
+              <h5 class="modal-title">
 
-          <button
-            type="button"
-            class="btn-close"
-            (click)="showModal = false"
-          ></button>
+                @if (editingEvent) {
 
-        </div>
+                  Edit Trip
 
-        <div class="modal-body">
+                } @else {
 
-          <app-travel-dialog
-            [selectedDate]="selectedDate"
-            (tripAdded)="handleTripAdded($event)">
-          </app-travel-dialog>
+                  Add Trip
+
+                }
+
+              </h5>
+
+              <button
+                type="button"
+                class="btn-close"
+                (click)="handleDialogClosed()"
+              ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+              <app-travel-dialog
+
+                [selectedDate]="selectedDate"
+
+                [editingEvent]="editingEvent"
+
+                (tripAdded)="handleTripAdded($event)"
+
+                (tripDeleted)="handleTripDeleted()"
+
+                (dialogClosed)="handleDialogClosed()"
+
+              >
+              </app-travel-dialog>
+
+            </div>
+
+          </div>
 
         </div>
 
       </div>
 
-    </div>
+      <div class="modal-backdrop fade show"></div>
 
-  </div>
+    }
 
-  <div class="modal-backdrop fade show"></div>
-
-}
+    <router-outlet></router-outlet>
 
   </div>
 
